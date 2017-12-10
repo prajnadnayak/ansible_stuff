@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: yes
+  
+  gather_facts: no
+  tasks:
+      - name: Install tomcat
+        apt: name=tomcat7 state=present 
+      
+      - name: Download WAR to server
+        get_url: 
+          url: http://<IP>:8081/repository/maven-snapshots/com/mkyong/CounterWebApp/1.0-SNAPSHOT/CounterWebApp-1.0-20171210.064501-1.war 
+          dest: /var/lib/tomcat7/webapps
+        notify:
+             - restarttomcat7
+   
+  handlers:
+      - name: restarttomcat7
+        service: name=tomcat7 state=restarted
